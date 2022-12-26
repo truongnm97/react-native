@@ -202,7 +202,7 @@ import java.util.regex.Pattern;
   @Override
   public void onDetachedFromNode(AnimatedNode parent) {
     if (parent != mParent) {
-      throw new IllegalArgumentException("Invalid parent node provided");
+      return;
     }
     mParent = null;
   }
