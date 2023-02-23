@@ -765,7 +765,7 @@ public class NativeAnimatedNodesManager implements EventDispatcherListener {
         // or fix the root cause
         ReactSoftExceptionLogger.logSoftException(TAG, new ReactNoCrashSoftException(ex));
       } else {
-        throw ex;
+        ReactSoftExceptionLogger.logSoftException(TAG, new ReactNoCrashSoftException(ex));
       }
     } else {
       mWarnedAboutGraphTraversal = false;

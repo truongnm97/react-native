@@ -281,11 +281,11 @@ public class UIImplementation {
 
     ViewManager viewManager = mViewManagers.get(className);
     if (viewManager == null) {
-      throw new IllegalViewOperationException("Got unknown view type: " + className);
+      return;
     }
     ReactShadowNode cssNode = mShadowNodeRegistry.getNode(tag);
     if (cssNode == null) {
-      throw new IllegalViewOperationException("Trying to update non-existent view with tag " + tag);
+      return;
     }
 
     if (props != null) {
@@ -416,8 +416,7 @@ public class UIImplementation {
         ViewAtIndex viewAtIndex = viewsToAdd[i];
         ReactShadowNode cssNodeToAdd = mShadowNodeRegistry.getNode(viewAtIndex.mTag);
         if (cssNodeToAdd == null) {
-          throw new IllegalViewOperationException(
-              "Trying to add unknown view tag: " + viewAtIndex.mTag);
+          return;
         }
         cssNodeToManage.addChildAt(cssNodeToAdd, viewAtIndex.mIndex);
       }
@@ -449,8 +448,7 @@ public class UIImplementation {
       for (int i = 0; i < childrenTags.size(); i++) {
         ReactShadowNode cssNodeToAdd = mShadowNodeRegistry.getNode(childrenTags.getInt(i));
         if (cssNodeToAdd == null) {
-          throw new IllegalViewOperationException(
-              "Trying to add unknown view tag: " + childrenTags.getInt(i));
+          return;
         }
         cssNodeToManage.addChildAt(cssNodeToAdd, i);
       }
@@ -464,22 +462,22 @@ public class UIImplementation {
    */
   public void replaceExistingNonRootView(int oldTag, int newTag) {
     if (mShadowNodeRegistry.isRootNode(oldTag) || mShadowNodeRegistry.isRootNode(newTag)) {
-      throw new IllegalViewOperationException("Trying to add or replace a root tag!");
+      return;
     }
 
     ReactShadowNode oldNode = mShadowNodeRegistry.getNode(oldTag);
     if (oldNode == null) {
-      throw new IllegalViewOperationException("Trying to replace unknown view tag: " + oldTag);
+      return;
     }
 
     ReactShadowNode parent = oldNode.getParent();
     if (parent == null) {
-      throw new IllegalViewOperationException("Node is not attached to a parent: " + oldTag);
+      return;
     }
 
     int oldIndex = parent.indexOf(oldNode);
     if (oldIndex < 0) {
-      throw new IllegalStateException("Didn't find child tag in parent");
+      return;
     }
 
     WritableArray tagsToAdd = Arguments.createArray();
@@ -503,8 +501,7 @@ public class UIImplementation {
   public void removeSubviewsFromContainerWithID(int containerTag) {
     ReactShadowNode containerNode = mShadowNodeRegistry.getNode(containerTag);
     if (containerNode == null) {
-      throw new IllegalViewOperationException(
-          "Trying to remove subviews of an unknown view tag: " + containerTag);
+      return;
     }
 
     WritableArray indicesToRemove = Arguments.createArray();
@@ -827,16 +824,14 @@ public class UIImplementation {
     ReactShadowNode node = mShadowNodeRegistry.getNode(tag);
     ReactShadowNode ancestor = mShadowNodeRegistry.getNode(ancestorTag);
     if (node == null || ancestor == null) {
-      throw new IllegalViewOperationException(
-          "Tag " + (node == null ? tag : ancestorTag) + " does not exist");
+      return;
     }
 
     if (node != ancestor) {
       ReactShadowNode currentParent = node.getParent();
       while (currentParent != ancestor) {
         if (currentParent == null) {
-          throw new IllegalViewOperationException(
-              "Tag " + ancestorTag + " is not an ancestor of tag " + tag);
+         return;
         }
         currentParent = currentParent.getParent();
       }
@@ -848,11 +843,11 @@ public class UIImplementation {
   private void measureLayoutRelativeToParent(int tag, int[] outputBuffer) {
     ReactShadowNode node = mShadowNodeRegistry.getNode(tag);
     if (node == null) {
-      throw new IllegalViewOperationException("No native view for tag " + tag + " exists!");
+      return;
     }
     ReactShadowNode parent = node.getParent();
     if (parent == null) {
-      throw new IllegalViewOperationException("View with tag " + tag + " doesn't have a parent!");
+      return;
     }
 
     measureLayoutRelativeToVerifiedAncestor(node, parent, outputBuffer);
@@ -915,17 +910,10 @@ public class UIImplementation {
     if (viewManager instanceof IViewManagerWithChildren) {
       viewManagerWithChildren = (IViewManagerWithChildren) viewManager;
     } else {
-      throw new IllegalViewOperationException(
-          "Trying to use view "
-              + node.getViewClass()
-              + " as a parent, but its Manager doesn't extends ViewGroupManager");
+      return;
     }
     if (viewManagerWithChildren != null && viewManagerWithChildren.needsCustomLayoutForChildren()) {
-      throw new IllegalViewOperationException(
-          "Trying to measure a view using measureLayout/measureLayoutRelativeToParent relative to"
-              + " an ancestor that requires custom layout for it's children ("
-              + node.getViewClass()
-              + "). Use measure instead.");
+      return;
     }
   }
 
