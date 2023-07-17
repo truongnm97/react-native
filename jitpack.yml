@@ -1,0 +1,6 @@
+jdk:
+  - openjdk11
+# before_install:
+#   - ./custom_setup.sh
+install:
+  - ./gradlew :ReactAndroid:installArchives --no-daemon
