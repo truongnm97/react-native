@@ -1,0 +1,6 @@
+jdk:
+  - openjdk11
+before_install:
+  - yarn install
+install:
+  - ./gradlew :ReactAndroid:installArchives --no-daemon
